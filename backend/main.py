@@ -74,9 +74,16 @@ def add_todo():
     
 
 @app.route('/api/todos/<int:id>/', methods=['DELETE'])
+@app.route('/api/todos/<int:id>/', methods=['DELETE'])
 def delete_todo(id):
     todo = TodoItem.query.get_or_404(id)
     db.session.delete(todo)
     db.session.commit()
     return jsonify({'message': 'Todo deleted successfully'})
 
+@app.route('/api/todos/<int:id>/toggle/', methods=['PATCH'])
+def toggle_todo(id):
+    todo = TodoItem.query.get_or_404(id)
+    todo.done = not todo.done
+    db.session.commit()
+    return jsonify(todo.to_dict())
