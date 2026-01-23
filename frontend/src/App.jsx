@@ -3,6 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 
+
 function App() {
   const TODOLIST_API_URL = 'http://localhost:5000/api/todos/';
 
@@ -25,6 +26,7 @@ function App() {
       alert("Failed to fetch todo list from backend. Make sure the backend is running.");
     }
   }
+const [newComments, setNewComments] = useState({});
 
   async function toggleDone(id) {
     const toggle_api_url = `${TODOLIST_API_URL}${id}/toggle/`
@@ -59,6 +61,26 @@ function App() {
       console.error("Error adding new todo:", error);
     }
   }
+  
+    async function addNewComment(todoId) {
+    try {
+      const url = `${TODOLIST_API_URL}${todoId}/comments/`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 'message': newComments[todoId] || "" }),
+      });
+      if (response.ok) {
+        setNewComments({ ...newComments, [todoId]: "" });
+        await fetchTodoList();
+      }
+    } catch (error) {
+      console.error("Error adding new comment:", error);
+    }
+  }
+  
 
   async function deleteTodo(id) {
     const delete_api_url = `${TODOLIST_API_URL}${id}/`
@@ -91,10 +113,24 @@ function App() {
                   {todo.comments.map(comment => (
                     <li key={comment.id}>{comment.message}</li>
                   ))}
+
+
                 </ul>
               </>
             )}
+            <div className="new-comment-forms">
+              <input
+                type="text"
+                value={newComments[todo.id] || ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setNewComments({ ...newComments, [todo.id]: value });
+                }}
+              />
 
+              
+              <button onClick={() => {addNewComment(todo.id)}}>Add Comment</button>
+            </div>
           </li>
         ))}
       </ul>

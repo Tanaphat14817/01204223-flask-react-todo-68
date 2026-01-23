@@ -1,12 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
 from flask_migrate import Migrate 
 from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship 
+
+from models import TodoItem, Comment, db
 
 app = Flask(__name__)
 CORS(app)
@@ -16,14 +14,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
 class Base(DeclarativeBase):
   pass
 
-db = SQLAlchemy(app, model_class=Base)
+db.init_app(app)     
 
 class TodoItem(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(100))
     done: Mapped[bool] = mapped_column(default=False)
 
-    comments: Mapped[list["Comment"]] = relationship(back_populates="todo")
+    comments: Mapped[list["Comment"]] = relationship(
+    back_populates="todo",
+    cascade="all, delete-orphan"
+)
 
     def to_dict(self):
         return {
@@ -49,17 +50,7 @@ class Comment(db.Model):
             "todo_id": self.todo_id
         }
 
-INITIAL_TODOS = [
-    TodoItem(title='Learn Flask'),
-    TodoItem(title='Build a Flask App'),
-    TodoItem(title='play deadlock')
-]
 
-with app.app_context():
-    if TodoItem.query.count() == 0:
-         for item in INITIAL_TODOS:
-             db.session.add(item)
-         db.session.commit()
 
 
 
@@ -94,7 +85,7 @@ def add_todo():
         return (jsonify({'error': 'Invalid todo data'}), 400)
     
 
-@app.route('/api/todos/<int:id>/', methods=['DELETE'])
+
 @app.route('/api/todos/<int:id>/', methods=['DELETE'])
 def delete_todo(id):
     todo = TodoItem.query.get_or_404(id)
@@ -108,5 +99,22 @@ def toggle_todo(id):
     todo.done = not todo.done
     db.session.commit()
     return jsonify(todo.to_dict())
+
+@app.route('/api/todos/<int:todo_id>/comments/', methods=['POST'])
+def add_comment(todo_id):
+    todo_item = TodoItem.query.get_or_404(todo_id)
+
+    data = request.get_json()
+    if not data or 'message' not in data:
+        return jsonify({'error': 'Comment message is required'}), 400
+
+    comment = Comment(
+        message=data['message'],
+        todo_id=todo_item.id
+    )
+    db.session.add(comment)
+    db.session.commit()
+ 
+    return jsonify(comment.to_dict())
 
 migrate = Migrate(app, db)
