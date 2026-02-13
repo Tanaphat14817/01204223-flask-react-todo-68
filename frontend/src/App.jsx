@@ -4,10 +4,10 @@ import viteLogo from '../public/vite.svg'
 import './App.css'
 
 
-function App() {
+function App({todo = []}) {
   const TODOLIST_API_URL = 'http://localhost:5000/api/todos/';
 
-  const [todoList, setTodoList] = useState([]);
+  const [todoList, setTodoList] = useState(todo);
   const [newTitle, setNewTitle] = useState("");
 
   useEffect(() => {
