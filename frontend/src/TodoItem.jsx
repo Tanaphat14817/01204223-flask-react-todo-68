@@ -33,7 +33,10 @@ function TodoItem({todo, toggleDone, deleteTodo, addNewComment}) {
               />
 
               
-              <button onClick={() => {addNewComment(todo.id)}}>Add Comment</button>
+               <button onClick={() => {                         // แก้ส่วนนี้
+          addNewComment(todo.id, newComment);
+          setNewComment("");
+        }}>Add Comment</button>
             </div>
           </li>
   )
