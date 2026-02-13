@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '../public/vite.svg'
 import './App.css'
+import  TodoItem  from './TodoItem.jsx'
 
 
 function App({todo = []}) {
@@ -73,7 +74,6 @@ const [newComments, setNewComments] = useState({});
         body: JSON.stringify({ 'message': newComments[todoId] || "" }),
       });
       if (response.ok) {
-        setNewComments({ ...newComments, [todoId]: "" });
         await fetchTodoList();
       }
     } catch (error) {
@@ -101,6 +101,15 @@ const [newComments, setNewComments] = useState({});
       <h1>Todo List</h1>
       <ul>
         {todoList.map(todo => (
+          <TodoItem 
+            key={todo.id} 
+            todo={todo}
+            toggleDone={toggleDone}
+            deleteTodo={deleteTodo}
+            addNewComment={addNewComment}
+          />
+
+        /*
           <li key={todo.id}>
             <span className={todo.done ? "done" : ""}>{todo.title}</span>
             <button onClick={() => {toggleDone(todo.id)}}>Toggle</button>
@@ -133,6 +142,8 @@ const [newComments, setNewComments] = useState({});
               <button onClick={() => {addNewComment(todo.id)}}>Add Comment</button>
             </div>
           </li>
+        */
+
         ))}
       </ul>
       New: <input type="text" value={newTitle} onChange={(e) => {setNewTitle(e.target.value)}} />

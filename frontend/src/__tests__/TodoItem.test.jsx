@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { expect } from 'vitest'
-import  App  from '../App.jsx'
+import TodoItem from '../TodoItem.jsx'
+
 
 const baseTodo = {             // ** TodoItem พื้นฐานสำหรับทดสอบ
   id: 1,
@@ -9,25 +10,25 @@ const baseTodo = {             // ** TodoItem พื้นฐานสำหร�
   comments: [],
 };
 
-describe('App', () => {
+describe('TodoItem ', () => {
   it('renders with no comments correctly', () => {
     render(
-      <App todo={[baseTodo]} />
+      <TodoItem todo={baseTodo} />
     );
     expect(baseTodo.comments.length).toBe(0);
 
   });
 
     it('renders with comments correctly', () => {
-    const todoWithComment = [{
+    const todoWithComment = {
       ...baseTodo,
       comments: [
         {id: 1, message: 'First comment'},
         {id: 2, message: 'Another comment'},
       ]
-    }];
+    };
     render(
-      <App todo={todoWithComment} />
+      <TodoItem todo={todoWithComment} />
     );
     expect(screen.getByText('Sample Todo')).toBeInTheDocument();
     //
@@ -47,7 +48,7 @@ describe('App', () => {
       ]
     }];
     render(
-      <App todo={todoWithComment} />
+      <TodoItem todo={todoWithComment} />
     );
     expect(screen.queryByText('No comments')).not.toBeInTheDocument();
   });
