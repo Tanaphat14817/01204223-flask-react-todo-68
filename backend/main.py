@@ -9,12 +9,14 @@ from flask_jwt_extended import JWTManager
 
 from models import TodoItem, Comment, db, User
 
+import os
+
 app = Flask(__name__)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI','sqlite:///todos.db') 
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY','asdfghjk')
 
-app.config['JWT_SECRET_KEY'] = 'fdsjkfjioi2rjshr2345hrsh043j5oij5545'
 jwt = JWTManager(app)
 
 db.init_app(app)     
