@@ -1,6 +1,12 @@
 import { render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
-import App from '../App.jsx'
+import App from '../TodoList.jsx'
+
+vi.mock('../context/AuthContext', () => ({
+  useAuth: vi.fn(),
+}));
+
+import { useAuth } from '../context/AuthContext';
 
 const todoItem1 = { id: 1, title: 'First todo', done: false, comments: [] };
 const todoItem2 = { id: 2, title: 'Second todo', done: false, comments: [
@@ -22,6 +28,11 @@ const mockResponse = (body, ok = true) =>
 describe('App', () => {
   beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn());
+    useAuth.mockReturnValue({
+      username: 'testuser',
+      login: vi.fn(),
+      logout: vi.fn(),
+    });
   });
 
   afterEach(() => {

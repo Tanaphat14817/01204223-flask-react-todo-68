@@ -11,7 +11,21 @@ const baseTodo = {             // ** TodoItem พื้นฐานสำหร�
   comments: [],
 };
 
+vi.mock('../context/AuthContext', () => ({
+  useAuth: vi.fn(),
+}));
+
+import { useAuth } from '../context/AuthContext';
+
 describe('TodoItem ', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', vi.fn());
+    useAuth.mockReturnValue({
+      username: 'testuser',
+      login: vi.fn(),
+      logout: vi.fn(),
+    });
+  });
   it('renders with no comments correctly', () => {
     render(
       <TodoItem todo={baseTodo} />
