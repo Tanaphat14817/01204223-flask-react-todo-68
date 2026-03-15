@@ -2,3 +2,6 @@
 __pycache__
 /instance
 .env
+local_config.py
+/frontend-static
+/local_config.py
