@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from './context/AuthContext.jsx';
 import './App.css'
 import LoginForm from './LoginForm.jsx';
-import PrivateRoute from './PrivateRoute.jsx';
+import PrivateRoute from "./PrivateRoute.jsx";
 
 import TodoList from './TodoList.jsx'
 
@@ -13,6 +13,14 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Route 
+            path="/" 
+            element={
+              <PrivateRoute>     
+                <TodoList apiUrl={TODOLIST_API_URL}/>
+              </PrivateRoute>     
+            } 
+          />
         <Routes>
           <Route 
             path="/login"
@@ -30,14 +38,6 @@ function App() {
               </>
             } 
           />
-          <Route 
-          path="/" 
-          element={
-            <PrivateRoute>     
-              <TodoList apiUrl={TODOLIST_API_URL}/>
-            </PrivateRoute>     
-          } 
-        />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

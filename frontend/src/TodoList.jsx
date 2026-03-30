@@ -4,7 +4,6 @@ import viteLogo from '../public/vite.svg'
 import './App.css'
 import  TodoItem  from './TodoItem.jsx'
 import { useAuth } from './context/AuthContext.jsx';
-import './App.css'
 
 
 
